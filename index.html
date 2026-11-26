@@ -6,15 +6,15 @@
 <meta name="theme-color" content="#0f1720">
 <title>Ruta Viva · Simulador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Saira+Condensed:ital,wght@1,700;1,900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5.24.1/dist/maplibre-gl.css" rel="stylesheet">
 <style>
-/* VOICE: arcade de conducción nocturno, pero legible en pleno sol
-   IDEA: el salpicadero y el HUD de un coche de juego sobre el mundo real
-   PICTURE: el propio mapa 3D a pantalla completa, con el coche delante de la cámara
-   COLOUR and TYPE: asfalto #0f1720, señal amarilla #ffc93c, cian de ruta #19d3ff; Chakra Petch + Inter
-   LAYOUT: calle arriba, navegación arriba-izquierda, velocímetro abajo, mandos táctiles a los lados */
-:root{--asf:#0f1720;--glass:rgba(12,18,26,.78);--ink:#f3f6fa;--mute:#9fb0c2;--sig:#ffc93c;--route:#19d3ff;--red:#ff4d5a;
+/* VOICE: mundo abierto cinematográfico: atardecer cálido de costa y neón de noche
+   IDEA: la ciudad real convertida en el escenario de un juego, con etalonaje de película
+   PICTURE: mapa 3D a pantalla completa con edificios de color y un coche 3D brillante
+   COLOUR and TYPE: magenta #ff3fa4, melocotón #ffb36b, turquesa #22e3d0 sobre noche #120c24; Saira Condensed cursiva + Inter
+   LAYOUT: calle arriba, minimapa redondo abajo-izquierda, velocímetro abajo, nombre de zona grande al entrar */
+:root{--asf:#0f1720;--glass:rgba(18,10,32,.72);--ink:#f3f6fa;--mute:#9fb0c2;--sig:#ffb36b;--route:#22e3d0;--mag:#ff3fa4;--red:#ff4d5a;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--asf);color:var(--ink);font:16px/1.4 Inter,system-ui,sans-serif}
@@ -24,7 +24,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--asf);color:var(-
 button{font:600 15px Inter,system-ui,sans-serif;color:var(--ink);cursor:pointer;border:0}
 button:focus-visible,input:focus-visible{outline:3px solid var(--sig);outline-offset:2px}
 #street{position:absolute;top:calc(10px + var(--st));left:50%;transform:translateX(-50%);padding:8px 16px;text-align:center;max-width:min(560px,calc(100% - 140px))}
-#sName{font:700 clamp(17px,3.2vw,24px)/1.15 "Chakra Petch",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sName{font:700 italic clamp(19px,3.6vw,27px)/1.1 "Saira Condensed",sans-serif;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #sMeta{font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tag{display:inline-block;padding:1px 7px;border-radius:6px;background:var(--sig);color:#1b1400;font-weight:700;font-size:12px;margin-left:6px}
 #tools{position:absolute;top:calc(10px + var(--st));right:calc(10px + var(--sr));display:flex;flex-direction:column;gap:8px}
@@ -43,13 +43,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sig);outline-of
 #nEta button{background:none;color:var(--red);font-size:13px;padding:0}
 #speedo{position:absolute;bottom:calc(14px + var(--sb));left:50%;transform:translateX(-50%);width:170px;height:104px;padding:0;border-radius:90px 90px 18px 18px}
 #speedo svg{position:absolute;inset:0;width:100%;height:100%}
-#spd{position:absolute;left:0;right:0;bottom:16px;text-align:center;font:700 38px/1 "Chakra Petch",sans-serif}
+#spd{position:absolute;left:0;right:0;bottom:14px;text-align:center;font:900 italic 46px/1 "Saira Condensed",sans-serif;text-shadow:0 0 14px rgba(255,63,164,.6)}
 #spd small{display:block;font:500 11px Inter,sans-serif;color:var(--mute);letter-spacing:.02em}
 #gear{position:absolute;right:16px;bottom:12px;font:700 14px "Chakra Petch",sans-serif;color:var(--sig)}
 .pad{position:absolute;bottom:calc(16px + var(--sb));display:flex;gap:10px;user-select:none;-webkit-user-select:none;touch-action:none}
 #padL{left:calc(14px + var(--sl))}#padR{right:calc(14px + var(--sr));align-items:flex-end}
 .pad button{width:70px;height:70px;border-radius:18px;display:grid;place-items:center;touch-action:none}
-.pad button.on{background:rgba(255,201,60,.9);color:#1b1400}
+.pad button.on{background:linear-gradient(135deg,#ff3fa4,#ffb36b);color:#1a0620}
 .pad svg{width:30px;height:30px;fill:currentColor}
 #gas{height:100px!important}
 body.gps .pad{display:none}
@@ -67,25 +67,43 @@ body.gps .pad{display:none}
 #close{float:right;background:none;color:var(--mute);height:30px;margin:-4px -4px 6px 0}
 #toast{position:absolute;left:50%;top:calc(74px + var(--st));transform:translateX(-50%);padding:10px 16px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:calc(100% - 30px);text-align:center}
 #toast.on{opacity:1}
-#start{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:radial-gradient(120% 80% at 50% 110%,#ffb347 0%,#e2574c 22%,#3b2a5a 48%,#0f1720 78%)}
+#start{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,#1a0b3a 0%,#5b1a6e 30%,#e2427f 55%,#ff9a5a 72%,#ffd07a 82%,#2a1240 82.2%,#120c24 100%)}
 #start .box{width:min(460px,100%);text-align:center}
-#start h1{font:700 clamp(40px,10vw,64px)/1 "Chakra Petch",sans-serif;margin:0 0 6px;text-wrap:balance}
-#start h1 span{color:var(--sig)}
+#start h1{font:900 italic clamp(56px,15vw,96px)/.9 "Saira Condensed",sans-serif;margin:0 0 10px;background:linear-gradient(180deg,#fff 35%,#ffd07a 55%,#ff3fa4 90%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #2a0b3a) drop-shadow(0 0 24px rgba(255,63,164,.5))}
+#start h1 span{color:transparent}
 #start p{color:#d8dee8;margin:0 0 22px}
-#start .road{height:120px;margin:0 auto 20px;width:100%;max-width:340px}
+#start .road{height:170px;margin:0 auto 6px;width:100%;max-width:420px}
 #start button{display:block;width:100%;height:56px;border-radius:14px;margin-top:10px;font-size:17px}
-#bGps{background:var(--sig);color:#1b1400}
+#bGps{background:linear-gradient(90deg,#ff3fa4,#ffb36b);color:#1a0620;font-weight:800}
 #bFree{background:rgba(255,255,255,.14)}
-#start small{display:block;margin-top:16px;color:#c2ccd8;font-size:13px}
-#start .k{margin-top:10px;color:#aab6c4;font-size:13px}
+#start small{display:block;margin-top:16px;color:#fff;font-size:13px;text-shadow:0 1px 4px #000}
+#start .k{margin-top:10px;color:#fff;font-size:13px;text-shadow:0 1px 4px #000}
 .maplibregl-ctrl-attrib{font-size:11px}
-.car{display:block;pointer-events:none;transform-origin:50% 100%;transition:transform .15s}#carEl.top .rear,#carEl:not(.top) .topv{display:none}#carEl.hide{visibility:hidden}
+#map canvas{filter:saturate(1.28) contrast(1.07)}
+#grade{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;transition:background 1.5s}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 55%,rgba(10,0,25,.55) 100%)}
+body.t0 #grade{background:linear-gradient(180deg,rgba(80,170,255,.35),rgba(255,210,150,.25) 45%,transparent 70%)}
+body.t1 #grade{background:linear-gradient(180deg,rgba(255,80,140,.6),rgba(255,160,80,.55) 40%,rgba(255,120,60,.2) 75%,rgba(120,40,160,.35))}
+body.t2 #grade{background:linear-gradient(180deg,rgba(120,40,255,.55),rgba(255,40,160,.4) 40%,rgba(20,200,220,.25))}
+#mini{position:absolute;left:calc(14px + var(--sl));bottom:calc(16px + var(--sb));width:150px;height:150px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.85);box-shadow:0 0 0 3px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.5)}
+#mini canvas{filter:saturate(1.1) contrast(1.1)}
+#mini .maplibregl-ctrl-bottom-right,#mini .maplibregl-ctrl-bottom-left{display:none}
+#mini::after{content:"";position:absolute;left:50%;top:50%;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:20px solid #fff;transform:translate(-50%,-60%);filter:drop-shadow(0 0 3px #000)}
+#mini b{position:absolute;top:4px;left:50%;transform:translateX(-50%);font:700 12px Inter;z-index:2;text-shadow:0 1px 3px #000}
+body:not(.gps) #mini{bottom:calc(100px + var(--sb));width:120px;height:120px}
+#zone{position:absolute;right:calc(20px + var(--sr));bottom:calc(140px + var(--sb));text-align:right;pointer-events:none;opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s;max-width:70%}
+#zone.on{opacity:1;transform:none}
+#zone b{display:block;font:900 italic clamp(34px,8vw,64px)/.95 "Saira Condensed",sans-serif;background:linear-gradient(180deg,#fff 30%,#ffb36b 60%,#ff3fa4);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(30,0,40,.8)) drop-shadow(0 0 18px rgba(255,63,164,.45))}
+#zone span{font:700 italic 18px "Saira Condensed",sans-serif;color:#fff;text-shadow:0 2px 6px #000;letter-spacing:.04em}
 @media(max-width:600px){#speedo{width:140px;height:88px}#spd{font-size:30px;bottom:12px}.pad button{width:60px;height:60px}#gas{height:86px!important}#street{max-width:calc(100% - 150px)}#nav{top:calc(128px + var(--st))}}
 @media(prefers-reduced-motion:reduce){#nArrow svg{transition:none}}
 </style>
 </head>
 <body>
 <div id="map"></div>
+<div id="grade"></div><div id="vig"></div>
+<div id="mini" aria-hidden="true"><b>N</b></div>
+<div id="zone" aria-live="polite"><b id="zName"></b><span id="zSub"></span></div>
 
 <div id="compass" class="g" aria-label="Rumbo"><b id="cmp">N</b></div>
 <div id="street" class="g"><div id="sName">Buscando carretera…</div><div id="sMeta">&nbsp;</div></div>
@@ -96,6 +114,7 @@ body.gps .pad{display:none}
   <button class="g" id="tSnd" aria-label="Sonido del motor" title="Sonido del motor"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg></button>
   <button class="g" id="tVoice" aria-label="Voz del navegador" title="Voz del navegador"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
   <button class="g" id="tAssist" aria-label="Asistente de carril" title="Asistente de carril (pega el coche a la carretera)"><svg viewBox="0 0 24 24"><path d="M7 21 10 3M17 21 14 3M12 7v2M12 13v2M12 19v2"/></svg></button>
+  <button class="g" id="tTheme" aria-label="Cambiar ambiente" title="Ambiente: día, atardecer o neón"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
   <button class="g" id="tMode" aria-label="Cambiar modo" title="Cambiar entre GPS y conducción libre"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
 </div>
 
@@ -114,7 +133,7 @@ body.gps .pad{display:none}
 <div id="speedo" class="g">
   <svg viewBox="0 0 170 104" preserveAspectRatio="none" aria-hidden="true">
     <path d="M20 92a65 65 0 0 1 130 0" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8" stroke-linecap="round"/>
-    <path id="arc" d="M20 92a65 65 0 0 1 130 0" fill="none" stroke="#ffc93c" stroke-width="8" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
+    <path id="arc" d="M20 92a65 65 0 0 1 130 0" fill="none" stroke="#ffb36b" stroke-width="8" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
   </svg>
   <div id="spd">0<small>km/h</small></div><div id="gear">D</div>
 </div>
@@ -132,14 +151,16 @@ body.gps .pad{display:none}
 
 <div id="start">
   <div class="box">
-    <svg class="road" viewBox="0 0 340 120" aria-hidden="true">
-      <path d="M150 0h40l120 120H30z" fill="#1d2633"/>
-      <path d="M168 6h4v14h-4zM166 34h8v20h-8zM163 70h14v26h-14z" fill="#ffc93c"/>
-      <path d="M150 0 30 120M190 0l120 120" stroke="#f3f6fa" stroke-width="3"/>
-      <g transform="translate(146 66)"><rect x="4" y="44" width="40" height="8" rx="4" fill="rgba(0,0,0,.4)"/><rect x="2" y="10" width="44" height="40" rx="12" fill="#e2263a"/><rect x="8" y="2" width="32" height="22" rx="8" fill="#b3172a"/><rect x="11" y="6" width="26" height="12" rx="4" fill="#9fdcff"/><rect x="4" y="34" width="10" height="5" rx="2" fill="#ffe7a3"/><rect x="34" y="34" width="10" height="5" rx="2" fill="#ffe7a3"/></g>
+    <svg class="road" viewBox="0 0 420 170" aria-hidden="true">
+      <defs><linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff3fa4"/></linearGradient></defs>
+      <circle cx="210" cy="96" r="70" fill="url(#sun)"/>
+      <g fill="#5b1a6e"><rect x="140" y="104" width="140" height="5"/><rect x="140" y="116" width="140" height="7"/><rect x="140" y="130" width="140" height="9"/></g>
+      <path d="M0 170V120h22v-30h18v30h14V70h26v50h10V96h20v74zM300 170v-60h16V84h22v26h12V60h24v50h14v-22h18v82z" fill="#2a0f3d"/>
+      <g fill="#1a0726"><path d="M86 170c3-30 4-58 2-82l5 1c2 26 0 54-3 81z"/><path d="M90 90c-14-10-30-10-42-2 14-2 28 0 40 6-12 0-26 6-34 16 12-8 26-12 38-12-6 6-10 16-10 26 6-10 12-18 20-22 4 8 6 18 6 28 2-12 2-24-2-32 10 2 20 8 26 16-4-10-12-18-22-22 12-2 26 2 36 8-10-10-26-14-40-12 8-6 20-10 32-10-14-4-28 0-38 10z"/><path d="M336 170c-3-26-2-50 2-72l-5 1c-4 22-5 46-2 71z"/><path d="M336 100c12-10 28-12 40-6-14 0-26 2-36 8 12 0 24 6 32 14-12-6-24-10-34-10 6 6 8 14 8 22-6-8-10-14-16-18-4 6-6 14-6 22-2-10 0-20 4-26-10 2-18 6-24 12 4-8 12-14 20-18-12 0-22 2-32 6 10-8 24-10 36-8-8-6-18-8-28-8 14-4 26 0 36 8z"/></g>
+      <path d="M190 170l14-34h12l14 34z" fill="#120c24"/><path d="M208 140h4v8h-4zM207 154h6v12h-6z" fill="#ffd07a"/>
     </svg>
-    <h1>Ruta <span>Viva</span></h1>
-    <p>Todas las carreteras del mundo, reales, en 3D. Conduce donde estás o donde quieras.</p>
+    <h1>RUTA VIVA</h1>
+    <p>El mundo real es tu mapa. Cada calle, cada carretera, en 3D. Conduce donde estás o donde quieras.</p>
     <button id="bGps">Usar mi ubicación (GPS)</button>
     <button id="bFree">Conducir libre</button>
     <div class="k">Teclado: flechas o WASD · Espacio frena · C cambia la cámara</div>
@@ -148,13 +169,15 @@ body.gps .pad{display:none}
 </div>
 
 <script src="https://unpkg.com/maplibre-gl@5.24.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <script>
 {
 const $=id=>document.getElementById(id);
 const R=6371008.8,D2R=Math.PI/180;
 const S={ahead:30,mode:'free',lat:40.41678,lng:-3.70379,h:0,camH:0,v:0,keys:{},cam:0,snd:false,voice:true,assist:true,
   gps:null,gpsPrev:null,route:null,step:0,lastRoad:null,lastQ:0,lastGeo:0,lastReroute:0,spoken:-1,dest:null};
-const CAMS=[{n:'Persecución',z:18.3,p:74},{n:'Lejana',z:16.8,p:62},{n:'Cenital',z:16.6,p:0},{n:'Cabina',z:19.2,p:82}];
+const CAMS=[{n:'Persecución',z:19.3,p:72},{n:'Lejana',z:17.6,p:62},{n:'Cenital',z:17.4,p:0},{n:'Cabina',z:20.2,p:80}];
+const CARS=1.9;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let tt;const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200)};
 const wrap=a=>((a%360)+540)%360-180;
@@ -166,24 +189,84 @@ const fmtD=m=>m>=1000?(m/1000).toFixed(m>=10000?0:1)+' km':(Math.round(m/10)*10)
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[S.lng,S.lat],zoom:18,pitch:74,maxPitch:85,
   interactive:false,attributionControl:{compact:true},fadeDuration:0});
 const setPad=()=>{};
+const THEMES=[
+ {n:'Día',bg:'#efe4d0',water:'#2ec4d8',green:'#86c95e',road:'#3a3845',minor:'#4a4757',cas:'#fff4e2',bld:['#ffe2cf','#ffbfa8','#f0909d','#c97aa8'],lab:'#2a1838',halo:'#fff',
+  sky:{'sky-color':'#3f8cff','horizon-color':'#ffd9b0','fog-color':'#f3e6d8','sky-horizon-blend':.5,'horizon-fog-blend':.6,'fog-ground-blend':.3,'atmosphere-blend':0},car:0xff2f6d},
+ {n:'Atardecer',bg:'#e6a886',water:'#2a7ea8',green:'#6c9b52',road:'#3a2a3f',minor:'#4b3650',cas:'#ffcf9a',bld:['#ffd1a0','#ff9f7c','#e2678a','#9a4a8c'],lab:'#2a0b2a',halo:'#ffe6c8',
+  sky:{'sky-color':'#5a2a9a','horizon-color':'#ff8a4c','fog-color':'#ff9e7a','sky-horizon-blend':.8,'horizon-fog-blend':.7,'fog-ground-blend':.45,'atmosphere-blend':0},car:0xffa21f},
+ {n:'Neón',bg:'#140d29',water:'#0c2c52',green:'#13311f',road:'#2b2244',minor:'#231c38',cas:'#ff3fa4',bld:['#2a1f52','#3d2a73','#5b2f8f','#8a2f9a'],lab:'#ffe1f6',halo:'#2a0b3a',
+  sky:{'sky-color':'#080320','horizon-color':'#ff3fa4','fog-color':'#2a0f45','sky-horizon-blend':.7,'horizon-fog-blend':.5,'fog-ground-blend':.6,'atmosphere-blend':0},car:0x22e3d0}];
+{const hr=new Date().getHours();S.theme=hr>=21||hr<7?2:(hr>=18||hr<9)?1:0}
+function applyTheme(m){
+  const T=THEMES[S.theme],sp=(id,k,v)=>{try{m.setPaintProperty(id,k,v)}catch(e){}};
+  for(const l of m.getStyle().layers){const id=l.id;
+    if(l.type==='background')sp(id,'background-color',T.bg);
+    else if(l.type==='fill'){if(/water/.test(id))sp(id,'fill-color',T.water);else if(/park|grass|wood|forest|landcover|meadow|scrub|garden/.test(id))sp(id,'fill-color',T.green);else if(/building/.test(id))sp(id,'fill-color',T.bld[0]);}
+    else if(l.type==='line'&&/road|highway|bridge|tunnel|street/.test(id)&&!/rail|path|pier/.test(id)){
+      if(/casing/.test(id))sp(id,'line-color',T.cas);else sp(id,'line-color',/motorway|trunk|primary/.test(id)?T.road:T.minor);}
+    else if(l.type==='line'&&/water|river/.test(id))sp(id,'line-color',T.water);
+    else if(l.type==='fill-extrusion'){sp(id,'fill-extrusion-color',['interpolate',['linear'],['coalesce',['get','render_height'],10],0,T.bld[0],15,T.bld[1],40,T.bld[2],100,T.bld[3]]);sp(id,'fill-extrusion-opacity',.92);sp(id,'fill-extrusion-vertical-gradient',true)}
+    else if(l.type==='symbol'){sp(id,'text-color',T.lab);sp(id,'text-halo-color',T.halo);}}
+  if(m===map){try{m.setSky(T.sky)}catch(e){}}
+}
+function setTheme(i){S.theme=i;document.body.classList.remove('t0','t1','t2');document.body.classList.add('t'+i);
+  if(map.isStyleLoaded())applyTheme(map);if(mini&&mini.isStyleLoaded())applyTheme(mini);carLayer.paint&&carLayer.paint();}
 map.on('load',()=>{
-  const hr=new Date().getHours(),night=hr<7||hr>=20;
-  try{map.setSky(night?{'sky-color':'#0b1630','horizon-color':'#3a3f6b','fog-color':'#1b2340','sky-horizon-blend':.6,'horizon-fog-blend':.5,'fog-ground-blend':.5,'atmosphere-blend':0}
-    :{'sky-color':'#4f9cff','horizon-color':'#ffe0bd','fog-color':'#e6edf5','sky-horizon-blend':.5,'horizon-fog-blend':.6,'fog-ground-blend':.35,'atmosphere-blend':0})}catch(e){}
+  applyTheme(map);
   const firstSym=(map.getStyle().layers.find(l=>l.type==='symbol')||{}).id;
   map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
-  map.addLayer({id:'route-case',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#00506a','line-width':['interpolate',['linear'],['zoom'],12,6,19,26]}},firstSym);
-  map.addLayer({id:'route-line',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#19d3ff','line-width':['interpolate',['linear'],['zoom'],12,3,19,16],'line-opacity':.9}},firstSym);
-  for(const l of map.getStyle().layers)if(l.type==='fill-extrusion'){try{map.setPaintProperty(l.id,'fill-extrusion-opacity',.85)}catch(e){}}
-  setPad();
+  map.addLayer({id:'route-case',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ff3fa4','line-width':['interpolate',['linear'],['zoom'],12,7,20,40],'line-blur':4,'line-opacity':.8}},firstSym);
+  map.addLayer({id:'route-line',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ffe1f6','line-width':['interpolate',['linear'],['zoom'],12,2,20,12],'line-opacity':.95}},firstSym);
+  if(window.THREE)map.addLayer(carLayer);
 });
-window.__map=map;
+window.__map=map;window.__S=S;
 
-// coche
-const carEl=document.createElement('div');
-carEl.id='carEl';carEl.innerHTML='<svg class="car rear" width="96" height="70" viewBox="0 0 96 70"><ellipse cx="48" cy="64" rx="46" ry="6" fill="rgba(0,0,0,.45)"/><rect x="8" y="44" width="16" height="20" rx="5" fill="#15181d"/><rect x="72" y="44" width="16" height="20" rx="5" fill="#15181d"/><path d="M20 10Q22 4 30 4h36q8 0 10 6l6 18H14z" fill="#b3172a"/><path d="M24 12q2-4 7-4h34q5 0 7 4l5 14H19z" fill="#7cc6f0"/><path d="M26 12h44l2 5H24z" fill="#bfe6ff" opacity=".6"/><rect x="4" y="26" width="88" height="30" rx="10" fill="#e2263a"/><rect x="4" y="26" width="88" height="6" rx="3" fill="#ff5b6b" opacity=".6"/><rect x="9" y="32" width="20" height="8" rx="3" class="bl" fill="#7a0a12"/><rect x="67" y="32" width="20" height="8" rx="3" class="bl" fill="#7a0a12"/><rect x="34" y="40" width="28" height="9" rx="2" fill="#f3f6fa"/><rect x="10" y="50" width="76" height="6" rx="3" fill="#2a1418"/></svg><svg class="car topv" width="44" height="80" viewBox="0 0 44 80"><ellipse cx="22" cy="44" rx="21" ry="36" fill="rgba(0,0,0,.35)"/><rect x="4" y="6" width="36" height="70" rx="14" fill="#e2263a"/><rect x="8" y="18" width="28" height="18" rx="6" fill="#8fd3ff"/><rect x="9" y="52" width="26" height="12" rx="5" fill="#5aa9d6"/><rect x="10" y="37" width="24" height="14" rx="4" fill="#b3172a"/><rect x="7" y="4" width="9" height="5" rx="2" fill="#fff6c8"/><rect x="28" y="4" width="9" height="5" rx="2" fill="#fff6c8"/><rect x="7" y="72" width="9" height="4" rx="2" class="bl" fill="#7a0a12"/><rect x="28" y="72" width="9" height="4" rx="2" class="bl" fill="#7a0a12"/></svg>';
-const car=new maplibregl.Marker({element:carEl,rotationAlignment:'viewport',pitchAlignment:'viewport',anchor:'bottom'}).setLngLat([S.lng,S.lat]).addTo(map);const rearSvg=carEl.querySelector('.rear');
-const brakeLights=on=>{for(const e of carEl.querySelectorAll('.bl'))e.setAttribute('fill',on?'#ff2b3d':'#7a0a12')};
+// coche 3D (three.js dentro del mapa)
+const carLayer={id:'car3d',type:'custom',renderingMode:'3d',
+  onAdd(m,gl){const T3=THREE;this.cam=new T3.Camera();const sc=this.scene=new T3.Scene();
+    sc.add(new T3.HemisphereLight(0xfff1e0,0x40305a,1.3));const sun=new T3.DirectionalLight(0xffffff,2.2);sun.position.set(-3,8,-4);sc.add(sun);
+    const rim=new T3.DirectionalLight(0xff6fb5,1.2);rim.position.set(4,3,6);sc.add(rim);
+    const g=this.g=new T3.Group();sc.add(g);
+    this.paintM=new T3.MeshStandardMaterial({color:0xff2f6d,metalness:.45,roughness:.22});
+    const glass=new T3.MeshStandardMaterial({color:0x34507a,metalness:.7,roughness:.05,emissive:0x0c1630}),dark=new T3.MeshStandardMaterial({color:0x111116,roughness:.8}),
+      chrome=new T3.MeshStandardMaterial({color:0xdddddd,metalness:1,roughness:.2});
+    const prof=(pts,w,mat,x0=0)=>{const sh=new T3.Shape();pts.forEach((p,i)=>i?sh.lineTo(p[0],p[1]):sh.moveTo(p[0],p[1]));
+      const geo=new T3.ExtrudeGeometry(sh,{depth:w,bevelEnabled:true,bevelThickness:.06,bevelSize:.06,bevelSegments:3});geo.translate(0,0,-w/2);geo.rotateY(Math.PI/2);
+      const me=new T3.Mesh(geo,mat);g.add(me);return me};
+    // perfil lateral (z: delante negativo), y altura
+    prof([[-2.3,.32],[-2.3,.72],[-2.05,.86],[-1.0,.98],[1.75,1.0],[2.28,.92],[2.32,.35],[1.75,.3],[1.75,.5],[1.15,.5],[1.15,.3],[-1.15,.3],[-1.15,.5],[-1.75,.5],[-1.75,.3]],1.78,this.paintM);
+    prof([[-.95,.98],[-.25,1.42],[.95,1.44],[1.65,1.0]],1.5,glass);
+    const roof=new T3.Mesh(new T3.BoxGeometry(1.42,.06,1.0),this.paintM);roof.position.set(0,1.46,.35);g.add(roof);
+    const wg=new T3.CylinderGeometry(.36,.36,.28,22);wg.rotateZ(Math.PI/2);const rg=new T3.CylinderGeometry(.22,.22,.3,14);rg.rotateZ(Math.PI/2);
+    for(const[x,z]of[[-.86,-1.45],[.86,-1.45],[-.86,1.45],[.86,1.45]]){const w=new T3.Mesh(wg,dark);w.position.set(x,.36,z);g.add(w);const r=new T3.Mesh(rg,chrome);r.position.set(x*1.02,.36,z);g.add(r)}
+    const hl=new T3.MeshBasicMaterial({color:0xfff6d8});this.tl=new T3.MeshBasicMaterial({color:0x7a0a1a});
+    for(const x of[-.62,.62]){const h=new T3.Mesh(new T3.BoxGeometry(.42,.14,.06),hl);h.position.set(x,.74,-2.36);g.add(h);
+      const t=new T3.Mesh(new T3.BoxGeometry(.5,.12,.06),this.tl);t.position.set(x,.78,2.36);g.add(t)}
+    const sh=new T3.Mesh(new T3.CircleGeometry(1,32),new T3.MeshBasicMaterial({color:0,transparent:true,opacity:.38,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.scale.set(1.25,2.6,1);sh.position.y=.02;g.add(sh);
+    this.glow=new T3.Mesh(new T3.CircleGeometry(1,32),new T3.MeshBasicMaterial({color:0xff3fa4,transparent:true,opacity:.55,depthWrite:false,blending:T3.AdditiveBlending}));
+    this.glow.rotation.x=-Math.PI/2;this.glow.scale.set(1.5,3,1);this.glow.position.y=.03;g.add(this.glow);
+    g.scale.setScalar(CARS);
+    this.renderer=new T3.WebGLRenderer({canvas:m.getCanvas(),context:gl,antialias:true});this.renderer.autoClear=false;this.paint();},
+  paint(){if(!this.paintM)return;const T=THEMES[S.theme];this.paintM.color.setHex(T.car);this.glow.visible=S.theme===2;},
+  brake(on){this.tl&&this.tl.color.setHex(on?0xff1a3c:0x7a0a1a)},
+  render(gl,args){if(S.cam===3)return;
+    const mc=maplibregl.MercatorCoordinate.fromLngLat([S.lng,S.lat],0),k=mc.meterInMercatorCoordinateUnits(),T3=THREE;
+    this.g.rotation.set(0,-S.h*D2R,0);this.g.rotation.z=((S.keys.right?1:0)-(S.keys.left?1:0))*Math.min(1,Math.abs(S.v)/15)*.05;
+    const l=new T3.Matrix4().makeTranslation(mc.x,mc.y,mc.z).scale(new T3.Vector3(k,-k,k)).multiply(new T3.Matrix4().makeRotationX(Math.PI/2));
+    this.cam.projectionMatrix=new T3.Matrix4().fromArray(args.defaultProjectionData.mainMatrix).multiply(l);
+    this.renderer.resetState();this.renderer.render(this.scene,this.cam);}};
+const brakeLights=on=>carLayer.brake(on);
+
+// minimapa
+let mini=null;
+try{mini=new maplibregl.Map({container:'mini',style:'https://tiles.openfreemap.org/styles/liberty',center:[S.lng,S.lat],zoom:15.3,interactive:false,attributionControl:false,fadeDuration:0});
+  mini.on('load',()=>{applyTheme(mini);for(const l of mini.getStyle().layers)if(l.type==='symbol'||l.type==='fill-extrusion')mini.setLayoutProperty(l.id,'visibility','none');
+    mini.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    mini.addLayer({id:'r',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ff3fa4','line-width':5}})});}catch(e){}
+const setRouteData=d=>{for(const m of[map,mini])m&&m.getSource&&m.getSource('route')&&m.getSource('route').setData(d)};
+let zt;function zone(name,sub){if(!name)return;$('zName').textContent=name;$('zSub').textContent=sub||'';const z=$('zone');z.classList.add('on');clearTimeout(zt);zt=setTimeout(()=>z.classList.remove('on'),4500)}
+$('tTheme').onclick=()=>{setTheme((S.theme+1)%3);toast('Ambiente: '+THEMES[S.theme].n)};
+setTheme(S.theme);
 
 // ---------- carreteras reales: nombre y asistente ----------
 const CLS={motorway:'Autopista / autovía',trunk:'Vía rápida',primary:'Carretera principal',secondary:'Carretera secundaria',tertiary:'Carretera local',minor:'Calle',service:'Vía de servicio',track:'Pista',path:'Camino',busway:'Carril bus',raceway:'Circuito'};
@@ -212,7 +295,8 @@ function readRoads(){
 }
 async function reverseGeo(){
   try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&accept-language=es&lat=${S.lat}&lon=${S.lng}`);const j=await r.json(),a=j.address||{};
-    S.place=[a.suburb||a.neighbourhood||a.village||a.town,a.city||a.town||a.municipality,a.country].filter((x,i,arr)=>x&&arr.indexOf(x)===i).slice(0,2).join(', ');}catch(e){}
+    const z1=a.suburb||a.neighbourhood||a.quarter||a.village||a.town||a.city,z2=a.city||a.town||a.municipality||a.state;S.place=[z1,z2].filter((x,i,arr)=>x&&arr.indexOf(x)===i).join(', ');
+    if(z1&&z1!==S.zone){S.zone=z1;zone(z1,z2&&z2!==z1?z2:(a.country||''))}}catch(e){}
 }
 
 // ---------- búsqueda y rutas ----------
@@ -224,7 +308,7 @@ $('sf').onsubmit=async e=>{e.preventDefault();const q=$('q').value.trim();if(!q)
     $('res').innerHTML=j.map((x,i)=>`<li><div class="n">${esc(x.display_name)}</div><div class="a"><button class="p" data-r="${i}">Ruta hasta aquí</button>${S.mode==='free'?`<button data-t="${i}">Teletransportar</button>`:''}</div></li>`).join('');
     $('res').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;const x=j[+(b.dataset.r??b.dataset.t)],ll=[+x.lon,+x.lat];
       $('search').classList.remove('on');
-      if(b.dataset.t!=null){S.lng=ll[0];S.lat=ll[1];S.v=0;clearRoute();toast('Bienvenido a '+x.display_name.split(',')[0]);S.lastGeo=0}
+      if(b.dataset.t!=null){S.lng=ll[0];S.lat=ll[1];S.v=0;clearRoute();S.zone='';S.lastGeo=0}
       else{S.dest={ll,name:x.display_name.split(',')[0]};route()}};
   }catch(err){$('res').innerHTML='<li>No hay conexión con el buscador. Prueba de nuevo.</li>'}};
 async function route(){
@@ -232,10 +316,10 @@ async function route(){
   try{const u=`https://router.project-osrm.org/route/v1/driving/${S.lng},${S.lat};${S.dest.ll[0]},${S.dest.ll[1]}?overview=full&geometries=geojson&steps=true`;
     const j=await (await fetch(u)).json();if(!j.routes||!j.routes.length){toast('No encuentro una ruta por carretera hasta ahí.');return}
     const rt=j.routes[0];S.route={geom:rt.geometry.coordinates,steps:rt.legs[0].steps,dur:rt.duration,dist:rt.distance};S.step=1;S.spoken=-1;
-    map.getSource('route')&&map.getSource('route').setData({type:'Feature',geometry:rt.geometry,properties:{}});
+    setRouteData({type:'Feature',geometry:rt.geometry,properties:{}});
     $('nav').classList.add('on');toast('Ruta a '+S.dest.name+': '+fmtD(rt.distance));
   }catch(e){toast('El servicio de rutas no responde ahora mismo.')}}
-function clearRoute(){S.route=null;S.dest=null;$('nav').classList.remove('on');map.getSource('route')&&map.getSource('route').setData({type:'FeatureCollection',features:[]})}
+function clearRoute(){S.route=null;S.dest=null;$('nav').classList.remove('on');setRouteData({type:'FeatureCollection',features:[]})}
 $('stopNav').onclick=clearRoute;
 const MOD={uturn:['da la vuelta',180],'sharp right':['gira cerrado a la derecha',135],right:['gira a la derecha',90],'slight right':['mantente a la derecha',35],
   straight:['sigue recto',0],'slight left':['mantente a la izquierda',-35],left:['gira a la izquierda',-90],'sharp left':['gira cerrado a la izquierda',-135]};
@@ -271,7 +355,7 @@ addEventListener('keyup',e=>{if(KEYMAP[e.code])S.keys[KEYMAP[e.code]]=0});
 for(const b of document.querySelectorAll('.pad button')){const k=b.dataset.k;
   const on=e=>{e.preventDefault();S.keys[k]=1;b.classList.add('on');try{b.setPointerCapture(e.pointerId)}catch(_){}startAudio()},off=()=>{S.keys[k]=0;b.classList.remove('on')};
   b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off);b.addEventListener('contextmenu',e=>e.preventDefault())}
-function cycleCam(){S.cam=(S.cam+1)%CAMS.length;carEl.classList.toggle('top',S.cam===2);carEl.classList.toggle('hide',S.cam===3);car.setAnchor&&car.setAnchor(S.cam===2?'center':'bottom');toast('Cámara: '+CAMS[S.cam].n)}
+function cycleCam(){S.cam=(S.cam+1)%CAMS.length;map.triggerRepaint();toast('Cámara: '+CAMS[S.cam].n)}
 $('tCam').onclick=cycleCam;
 $('tVoice').onclick=()=>{S.voice=!S.voice;$('tVoice').classList.toggle('off',!S.voice);toast(S.voice?'Voz activada':'Voz desactivada')};
 $('tAssist').onclick=()=>{S.assist=!S.assist;$('tAssist').classList.toggle('off',!S.assist);toast(S.assist?'Asistente de carril: el coche sigue la carretera':'Asistente apagado: conducción libre total')};
@@ -339,10 +423,9 @@ function tick(now){
   map.jumpTo({center:[S.lng+a*Math.sin(bear*D2R)/(111320*cc),S.lat+a*Math.cos(bear*D2R)/110540],bearing:bear,pitch:cm.p,zoom:z});
   const H=map.getContainer().clientHeight,cy=map.project([S.lng,S.lat]).y,ty=H*(S.cam===2?0.62:S.cam===3?1.02:0.74);
   S.ahead=Math.max(0,Math.min(400,S.ahead+(ty-cy)*0.04*Math.pow(2,18-z)));
-  car.setLngLat([S.lng,S.lat]).setRotation(S.cam===2?0:0);
-  rearSvg.style.transform=`scale(${S.cam===1?.7:1}) rotate(${(((K.right?1:0)-(K.left?1:0))*(S.mode==='free'?4:0))+wrap(S.h-S.camH)*.3}deg)`;
   const kmh=Math.abs(S.v)*3.6;$('spd').firstChild.nodeValue=Math.round(kmh);$('arc').setAttribute('stroke-dasharray',`${Math.min(100,kmh/1.8)} 100`);
-  $('arc').setAttribute('stroke',kmh>120?'#ff4d5a':'#ffc93c');
+  $('arc').setAttribute('stroke',kmh>120?'#ff3fa4':'#ffb36b');
+  if(mini&&now-(S.lastMini||0)>90){S.lastMini=now;mini.jumpTo({center:[S.lng,S.lat],bearing:S.h,zoom:15.6-Math.min(1.2,Math.abs(S.v)/30)});document.querySelector('#mini b').style.transform=`translateX(-50%) rotate(${-S.h}deg)`}
   $('cmp').textContent=['N','NE','E','SE','S','SO','O','NO'][Math.round(S.h/45)%8];
   if(ac&&S.snd)osc.frequency.setTargetAtTime(45+kmh*1.6+(K.gas?20:0),ac.currentTime,.08),osc2.frequency.setTargetAtTime(22+kmh*.8,ac.currentTime,.08);
   if(now-S.lastQ>120){S.lastQ=now;readRoads()}
